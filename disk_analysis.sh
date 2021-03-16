@@ -26,9 +26,10 @@ check_empty() {
 # try_mount(img, mount_point)
 # Tries to mount the image at the specified mount point
 # Returns 0 if successful,
-# 1 if the image does not exist
-# or 2 if the mount point is not an empty directory
-# Call cleanup to unmount
+# Error codes:
+# 	1: Image does not exist
+# 	2: Mount point is not an empty directory
+#	3: Error during mount
 try_mount() {
 	echo "Trying to mount '$1' at '$2'"
 	
@@ -55,7 +56,16 @@ try_mount() {
 		check_empty $2
 		if [[ "$?" -ne 0 ]]; then
 			echo "Mount point is not empty">&2
-			return 2
+
+			# If in debug mode, assume the image is mounted at $2
+			if [[ $debug = true ]]; then
+				echo "[DEBUG] Assuming image is already mounted">&2
+				return 0
+			else
+				return 2
+			fi
+
+
 		fi
 	else
 		# Otherwise, create it
@@ -71,13 +81,11 @@ try_mount() {
 
 	echo "Mounting..."
 
+	# Find first available loop device
 	local loop=$(losetup -f)
 	echo "Using loop device '$loop'"
 
 	losetup -P $loop $1
-
-	# Debug
-	#ls $loop*
 
 	# Get first partition
 	# https://stackoverflow.com/questions/6022384/bash-tool-to-get-nth-line-from-a-file/6022431
@@ -86,6 +94,11 @@ try_mount() {
 	# Mount as read only
 	# https://askubuntu.com/questions/296331/how-to-mount-a-hard-disk-as-read-only-from-the-terminal
 	mount -o ro,noload $part1 $2
+
+	if [[ "$?" -ne 0 ]]; then
+		echo "Error during mount (is $1 a disk image?)">&2
+		return 3
+	fi
 
 	# Detach when the image is unmounted
 	losetup -d $loop
@@ -123,13 +136,11 @@ while getopts "i:m:d" arg; do
 	esac
 done
 
-echo $debug
-
 if [[ -z "$image" ]] || [[ -z "$mount_point" ]]; then
 	echo "Missing a required parameter">&2
-	echo -e "\t[REQUIRED] -i Image">&2
-	echo -e "\t[REQUIRED] -m Mount point">&2
-	echo -e "\t[OPTIONAL] -d DEBUG keep image mounted">&2
+	echo -e "\t[REQUIRED] -i <img> Image">&2
+	echo -e "\t[REQUIRED] -m <dir> Mount point">&2
+	echo -e "\t[OPTIONAL] -d Debug mode (keep image mounted)">&2
 
 	exit 1
 fi
@@ -147,4 +158,6 @@ echo "Image mounted successfully"
 # Cleanup
 if [[ $debug != true ]]; then
 	cleanup $mount_point
+else
+	echo "[DEBUG] Keeping image mounted"
 fi
