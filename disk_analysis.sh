@@ -28,6 +28,7 @@ check_empty() {
 # Returns 0 if successful,
 # 1 if the image does not exist
 # or 2 if the mount point is not an empty directory
+# Call cleanup to unmount
 try_mount() {
 	echo "Trying to mount '$1' at '$2'"
 	
@@ -36,6 +37,9 @@ try_mount() {
 		echo "'$1' does not exist or is not a file">&2
 		return 1;
 	fi
+
+	# Is the file a disk image?
+
 
 	# If the mount point exists...
 	if [ -e "$2" ]; then
@@ -62,8 +66,41 @@ try_mount() {
 
 	# At this point, $1 points to a file
 	# and $2 points to an empty directory
+	
+	# Mount the image
+	# https://unix.stackexchange.com/questions/316401/how-to-mount-a-disk-image-from-the-command-line/316407#316407
+
+	# Needs to be global for cleanup
+	loop=$(losetup -f)
+	echo "Using loop device '$loop'"
+
+	losetup -P $loop $1
+
+	# Debug
+	#ls $loop*
+
+	# Get first partition
+	# https://stackoverflow.com/questions/6022384/bash-tool-to-get-nth-line-from-a-file/6022431
+	local part1=$(ls $loop* | sed "2q;d")
+
+	mount $part1 $2
 }
 
+# cleanup(mount_point, loop)
+# Call when done with the mounted image
+cleanup() {
+	echo "Unmounting image"
+
+	umount $1
+	losetup -d $2
+}
+
+# Script requires root
+# https://stackoverflow.com/questions/18215973/how-to-check-if-running-as-root-in-a-bash-script
+if [ "$EUID" -ne 0 ]; then
+	echo "This script requires root">&2
+	exit 1
+fi
 
 # Check that the right number of arguments were provided
 # https://stackoverflow.com/questions/4341630/checking-for-the-correct-number-of-arguments
@@ -84,6 +121,7 @@ if [ "$?" -ne 0 ]; then
 	exit 1
 fi
 
+echo "Image mounted successfully"
 
 # Cleanup
-
+cleanup $mount_point $loop
