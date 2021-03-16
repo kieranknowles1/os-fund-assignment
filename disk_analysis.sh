@@ -4,7 +4,7 @@
 # Returns 0 if the directory is empty, 1 if it is not
 # or 2 if 'dir' is not a directory
 check_empty() {
-	if [ ! -d "$1" ]; then
+	if [[ ! -d "$1" ]]; then
 		echo "$1 is not a directory"
 		return 2
 	fi
@@ -17,7 +17,7 @@ check_empty() {
 	#echo "$file_count files"
 
 	# ls should only return '.' and '..'
-	if [ $file_count -ne 0 ]; then
+	if [[ $file_count -ne 0 ]]; then
 		echo "$1 is not empty">&2
 		return 1
 	fi
@@ -33,7 +33,7 @@ try_mount() {
 	echo "Trying to mount '$1' at '$2'"
 	
 	# Check that the image exists and is a file
-	if [ ! -f "$1" ]; then
+	if [[ ! -f "$1" ]]; then
 		echo "'$1' does not exist or is not a file">&2
 		return 1;
 	fi
@@ -42,18 +42,18 @@ try_mount() {
 
 
 	# If the mount point exists...
-	if [ -e "$2" ]; then
+	if [[ -e "$2" ]]; then
 		echo "Mount point exists"
 
 		# Check it is a directory
-		if [ ! -d "$2" ]; then
+		if [[ ! -d "$2" ]]; then
 			echo "Mount point is not a directory">&2
 			return 2
 		fi
 
 		# Check it is empty
 		check_empty $2
-		if [ "$?" -ne 0 ]; then
+		if [[ "$?" -ne 0 ]]; then
 			echo "Mount point is not empty">&2
 			return 2
 		fi
@@ -61,7 +61,6 @@ try_mount() {
 		# Otherwise, create it
 		echo "Mount point does not exist, creating"
 		mkdir "$2"
-		return 0
 	fi
 
 	# At this point, $1 points to a file
@@ -70,8 +69,9 @@ try_mount() {
 	# Mount the image
 	# https://unix.stackexchange.com/questions/316401/how-to-mount-a-disk-image-from-the-command-line/316407#316407
 
-	# Needs to be global for cleanup
-	loop=$(losetup -f)
+	echo "Mounting..."
+
+	local loop=$(losetup -f)
 	echo "Using loop device '$loop'"
 
 	losetup -P $loop $1
@@ -83,40 +83,61 @@ try_mount() {
 	# https://stackoverflow.com/questions/6022384/bash-tool-to-get-nth-line-from-a-file/6022431
 	local part1=$(ls $loop* | sed "2q;d")
 
-	mount $part1 $2
+	# Mount as read only
+	# https://askubuntu.com/questions/296331/how-to-mount-a-hard-disk-as-read-only-from-the-terminal
+	mount -o ro,noload $part1 $2
+
+	# Detach when the image is unmounted
+	losetup -d $loop
 }
 
-# cleanup(mount_point, loop)
+# cleanup(mount_point)
 # Call when done with the mounted image
 cleanup() {
 	echo "Unmounting image"
 
 	umount $1
-	losetup -d $2
+
+	# Done in try_mount
+	# losetup -d $2
 }
 
 # Script requires root
 # https://stackoverflow.com/questions/18215973/how-to-check-if-running-as-root-in-a-bash-script
-if [ "$EUID" -ne 0 ]; then
+if [[ "$EUID" -ne 0 ]]; then
 	echo "This script requires root">&2
 	exit 1
 fi
 
-# Check that the right number of arguments were provided
-# https://stackoverflow.com/questions/4341630/checking-for-the-correct-number-of-arguments
-if [ "$#" -ne 2 ]; then
-	# Echo to stderr
-	echo "Usage: $0 image mount_point">&2
+# Parse parameters
+debug=false
+
+while getopts "i:m:d" arg; do
+	case $arg in
+		i) image="$OPTARG"
+			;;
+		m) mount_point="$OPTARG"
+			;;
+		d) debug=true
+			;;
+	esac
+done
+
+echo $debug
+
+if [[ -z "$image" ]] || [[ -z "$mount_point" ]]; then
+	echo "Missing a required parameter">&2
+	echo -e "\t[REQUIRED] -i Image">&2
+	echo -e "\t[REQUIRED] -m Mount point">&2
+	echo -e "\t[OPTIONAL] -d DEBUG keep image mounted">&2
+
 	exit 1
 fi
-
-image=$1
-mount_point=$2
 
 try_mount $image $mount_point
 
 # Check that mount was successful
-if [ "$?" -ne 0 ]; then
+if [[ "$?" -ne 0 ]]; then
 	echo "Could not mount image">&2
 	exit 1
 fi
@@ -124,4 +145,6 @@ fi
 echo "Image mounted successfully"
 
 # Cleanup
-cleanup $mount_point $loop
+if [[ $debug != true ]]; then
+	cleanup $mount_point
+fi
