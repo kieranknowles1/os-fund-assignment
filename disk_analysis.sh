@@ -125,13 +125,21 @@ fi
 # Parse parameters
 debug=false
 
-while getopts "i:m:d" arg; do
+while getopts ":i:m:d" arg; do
 	case $arg in
 		i) image="$OPTARG"
 			;;
 		m) mount_point="$OPTARG"
 			;;
 		d) debug=true
+			;;
+		:)
+			echo "Option -$OPTARG requires an argument.">&2
+			exit 1
+			;;
+		\?)
+			echo "Invalid option: -$OPTARG">&2
+			exit 1
 			;;
 	esac
 done
