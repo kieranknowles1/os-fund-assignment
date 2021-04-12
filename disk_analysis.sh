@@ -78,10 +78,12 @@ try_mount() {
 	
 	# Mount the image
 	# https://unix.stackexchange.com/questions/316401/how-to-mount-a-disk-image-from-the-command-line/316407#316407
+	# -o loop cannot be used as the image contains multiple partitions
 
 	echo "Mounting..."
 
 	# Find first available loop device
+	# This avoids hard-coding an offset
 	local loop=$(losetup -f)
 	echo "Using loop device '$loop'"
 
@@ -115,6 +117,20 @@ cleanup() {
 	# losetup -d $2
 }
 
+# analyse_dir(dir)
+# Extract metadata from the specified directory within the mounted image
+analyse_dir() {
+	# $1 = dir
+
+	#--quote-name \
+	echo "Analysing directory '$mount_point/$1'"
+	ls 	--almost-all \
+		-l \
+		"$mount_point/$1" \
+		> $out_dir/$1.txt
+	#ls "$1/$2"
+}
+
 # Script requires root
 # https://stackoverflow.com/questions/18215973/how-to-check-if-running-as-root-in-a-bash-script
 if [[ "$EUID" -ne 0 ]]; then
@@ -124,14 +140,18 @@ fi
 
 # Parse parameters
 debug=false
+out_dir="out"
 
-while getopts ":i:m:d" arg; do
+while getopts ":i:m:o:d" arg; do
 	case $arg in
 		i) image="$OPTARG"
 			;;
 		m) mount_point="$OPTARG"
 			;;
 		d) debug=true
+			;;
+		o)
+			out_dir="$OPTARG"
 			;;
 		:)
 			echo "Option -$OPTARG requires an argument.">&2
@@ -148,7 +168,8 @@ if [[ -z "$image" ]] || [[ -z "$mount_point" ]]; then
 	echo "Missing a required parameter">&2
 	echo -e "\t[REQUIRED] -i <img> Image">&2
 	echo -e "\t[REQUIRED] -m <dir> Mount point">&2
-	echo -e "\t[OPTIONAL] -d Debug mode (keep image mounted)">&2
+	echo -e "\t[OPTIONAL] -o <dir>=out Output directory">&2
+	echo -e "\t[OPTIONAL] -d Debug mode">&2
 
 	exit 1
 fi
@@ -162,6 +183,13 @@ if [[ "$?" -ne 0 ]]; then
 fi
 
 echo "Image mounted successfully"
+
+# Extract metadata
+# https://stackoverflow.com/questions/793858/how-to-mkdir-only-if-a-directory-does-not-already-exist
+mkdir -p $out_dir
+
+analyse_dir bin
+analyse_dir sbin
 
 # Cleanup
 if [[ $debug != true ]]; then
