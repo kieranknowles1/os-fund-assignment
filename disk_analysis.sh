@@ -16,7 +16,7 @@ check_empty() {
 
 	#echo "$file_count files"
 
-	# ls should only return '.' and '..'
+	# ls should return nothing for an empty directory
 	if [[ $file_count -ne 0 ]]; then
 		echo "$1 is not empty">&2
 		return 1
@@ -141,8 +141,9 @@ fi
 # Parse parameters
 debug=false
 out_dir="out"
+analysis_dirs=("bin" "sbin")
 
-while getopts ":i:m:o:d" arg; do
+while getopts ":i:m:o:a:d" arg; do
 	case $arg in
 		i) image="$OPTARG"
 			;;
@@ -152,6 +153,10 @@ while getopts ":i:m:o:d" arg; do
 			;;
 		o)
 			out_dir="$OPTARG"
+			;;
+		a)
+			# https://stackoverflow.com/questions/9293887/reading-a-delimited-string-into-an-array-in-bash/53369525
+			analysis_dirs=($OPTARG)
 			;;
 		:)
 			echo "Option -$OPTARG requires an argument.">&2
@@ -168,6 +173,7 @@ if [[ -z "$image" ]] || [[ -z "$mount_point" ]]; then
 	echo "Missing a required parameter">&2
 	echo -e "\t[REQUIRED] -i <img> Image">&2
 	echo -e "\t[REQUIRED] -m <dir> Mount point">&2
+	echo -e "\t[OPTIONAL] -a <dirs>='bin sbin' analysis directories (space delimited)">&2
 	echo -e "\t[OPTIONAL] -o <dir>=out Output directory">&2
 	echo -e "\t[OPTIONAL] -d Debug mode">&2
 
@@ -188,8 +194,10 @@ echo "Image mounted successfully"
 # https://stackoverflow.com/questions/793858/how-to-mkdir-only-if-a-directory-does-not-already-exist
 mkdir -p $out_dir
 
-analyse_dir bin
-analyse_dir sbin
+# https://stackoverflow.com/questions/8880603/loop-through-an-array-of-strings-in-bash
+for dir in "${analysis_dirs[@]}"; do
+	analyse_dir $dir
+done
 
 # Cleanup
 if [[ $debug != true ]]; then
