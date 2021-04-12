@@ -1,3 +1,5 @@
+# Image
 *.img
 
+# Output
 out/

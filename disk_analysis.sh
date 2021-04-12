@@ -122,12 +122,15 @@ cleanup() {
 analyse_dir() {
 	# $1 = dir
 
-	#--quote-name \
+	# https://www.rapidtables.com/code/linux/ls/ls-full-path.html
+	# Print full path
+
 	echo "Analysing directory '$mount_point/$1'"
 	ls 	--almost-all \
+		--quote-name \
 		-l \
-		"$mount_point/$1" \
-		> $out_dir/$1.txt
+		-d "$mount_point/$1"/* \
+		>> "$out_dir/filedata.txt"
 	#ls "$1/$2"
 }
 
@@ -192,7 +195,7 @@ echo "Image mounted successfully"
 
 # Extract metadata
 # https://stackoverflow.com/questions/793858/how-to-mkdir-only-if-a-directory-does-not-already-exist
-mkdir -p $out_dir
+mkdir -p "$out_dir"
 
 # https://stackoverflow.com/questions/8880603/loop-through-an-array-of-strings-in-bash
 for dir in "${analysis_dirs[@]}"; do
