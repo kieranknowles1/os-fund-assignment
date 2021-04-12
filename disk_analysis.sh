@@ -125,12 +125,20 @@ analyse_dir() {
 	# https://www.rapidtables.com/code/linux/ls/ls-full-path.html
 	# Print full path
 
+	# https://www.unix.com/unix-for-dummies-questions-and-answers/188029-ls-date-format.html
+	# Date format
+
+	# https://stackoverflow.com/questions/156532/how-do-i-import-a-whitespace-delimited-text-file-into-mysql
+	# Format for database import
+
 	echo "Analysing directory '$mount_point/$1'"
 	ls 	--almost-all \
 		--quote-name \
+		--time-style='+"%Y-%m-%d %H:%m:%S"' \
 		-l \
 		-d "$mount_point/$1"/* \
-		>> "$out_dir/filedata.txt"
+		| tr -s ' ' \
+		>> "filedata.txt"
 	#ls "$1/$2"
 }
 
@@ -143,19 +151,15 @@ fi
 
 # Parse parameters
 debug=false
-out_dir="out"
 analysis_dirs=("bin" "sbin")
 
-while getopts ":i:m:o:a:d" arg; do
+while getopts ":i:m:a:d" arg; do
 	case $arg in
 		i) image="$OPTARG"
 			;;
 		m) mount_point="$OPTARG"
 			;;
 		d) debug=true
-			;;
-		o)
-			out_dir="$OPTARG"
 			;;
 		a)
 			# https://stackoverflow.com/questions/9293887/reading-a-delimited-string-into-an-array-in-bash/53369525
@@ -177,7 +181,6 @@ if [[ -z "$image" ]] || [[ -z "$mount_point" ]]; then
 	echo -e "\t[REQUIRED] -i <img> Image">&2
 	echo -e "\t[REQUIRED] -m <dir> Mount point">&2
 	echo -e "\t[OPTIONAL] -a <dirs>='bin sbin' analysis directories (space delimited)">&2
-	echo -e "\t[OPTIONAL] -o <dir>=out Output directory">&2
 	echo -e "\t[OPTIONAL] -d Debug mode">&2
 
 	exit 1
@@ -194,8 +197,6 @@ fi
 echo "Image mounted successfully"
 
 # Extract metadata
-# https://stackoverflow.com/questions/793858/how-to-mkdir-only-if-a-directory-does-not-already-exist
-mkdir -p "$out_dir"
 
 # https://stackoverflow.com/questions/8880603/loop-through-an-array-of-strings-in-bash
 for dir in "${analysis_dirs[@]}"; do

@@ -2,4 +2,4 @@
 *.img
 
 # Output
-out/
+filedata.txt

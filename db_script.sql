@@ -1,0 +1,13 @@
+CREATE TABLE IF NOT EXISTS KF4005A (
+    perms CHAR(10),
+    links INT(6),
+    own VARCHAR(30),
+    groupOwn VARCHAR(30),
+    size INT(10),
+    modified DATETIME,
+    filePath VARCHAR(200) PRIMARY KEY
+);
+
+LOAD DATA LOCAL INFILE 'filedata.txt' INTO TABLE KF4005A
+FIELDS TERMINATED BY ' '
+OPTIONALLY ENCLOSED BY '"';
