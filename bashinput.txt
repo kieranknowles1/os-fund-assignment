@@ -1,0 +1,2 @@
+sudo ./disk_analysis.sh -i KF4005.img -m /mnt/img/
+./db_import.sh -d test

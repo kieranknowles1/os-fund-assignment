@@ -1,0 +1,12 @@
+kieran@ubuntu-d01:~/share/assignment$ sudo ./disk_analysis.sh -i KF4005.img -m /mnt/img/
+Trying to mount 'KF4005.img' at '/mnt/img/'
+Mount point exists
+Mounting...
+Using loop device '/dev/loop1'
+Image mounted successfully
+Analysing directory '/mnt/img/bin'
+Analysing directory '/mnt/img/sbin'
+Unmounting image
+kieran@ubuntu-d01:~/share/assignment$ ./db_import.sh -d test
+Enter password: 
+kieran@ubuntu-d01:~/share/assignment$ 

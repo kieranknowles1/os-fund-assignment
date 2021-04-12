@@ -131,12 +131,12 @@ analyse_dir() {
 	# https://stackoverflow.com/questions/156532/how-do-i-import-a-whitespace-delimited-text-file-into-mysql
 	# Format for database import
 
-	echo "Analysing directory '$mount_point/$1'"
+	echo "Analysing directory '$mount_point$1'"
 	ls 	--almost-all \
 		--quote-name \
 		--time-style='+"%Y-%m-%d %H:%m:%S"' \
 		-l \
-		-d "$mount_point/$1"/* \
+		-d "$mount_point$1"/* \
 		| tr -s ' ' \
 		>> "filedata.txt"
 	#ls "$1/$2"

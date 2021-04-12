@@ -32,4 +32,4 @@ if [[ -z "$database" ]] ; then
 fi
 
 # Connect to database and run script
-mysql -u root -p $database < db_script.sql
+mysql -u root -p $database < db_script.sql > sqlout.txt
