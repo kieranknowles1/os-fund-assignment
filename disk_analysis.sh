@@ -136,7 +136,7 @@ analyse_dir() {
 		--quote-name \
 		--time-style='+"%Y-%m-%d %H:%m:%S"' \
 		-l \
-		-d "$mount_point$1"/* \
+		-d "$mount_point/$1"/* \
 		| tr -s ' ' \
 		>> "filedata.txt"
 	#ls "$1/$2"
