@@ -2,4 +2,3 @@ sudo ./disk_analysis.sh -i KF4005.img -m /mnt/img
 head filedata.txt
 ./db_import.sh -d test -u kieran
 head sqlout.txt
-./cleanup.sh -d test -u kieran

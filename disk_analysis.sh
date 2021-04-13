@@ -186,6 +186,11 @@ if [[ -z "$image" ]] || [[ -z "$mount_point" ]]; then
 	exit 1
 fi
 
+# Analyse partition table
+echo "Partition table:"
+fdisk -l $image
+echo ""
+
 try_mount $image $mount_point
 
 # Check that mount was successful

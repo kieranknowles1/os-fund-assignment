@@ -1,39 +1,48 @@
-kieran@ubuntu-d01:~/share/assignment$ sudo ./disk_analysis.sh -i KF4005.img -m /mnt/img
-Trying to mount 'KF4005.img' at '/mnt/img'
+kieran@ubuntu-d01:~/share/assignment$ sudo ./disk_analysis.sh -i KF4005.img -m /mnt/img/
+Partition table:
+Disk KF4005.img: 3 GiB, 3221225472 bytes, 6291456 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: dos
+Disk identifier: 0xc2cab936
+
+Device      Boot   Start     End Sectors  Size Id Type
+KF4005.img1 *       2048 4290559 4288512    2G 83 Linux
+KF4005.img2      4292606 6289407 1996802  975M  5 Extended
+KF4005.img5      4292608 6289407 1996800  975M 82 Linux swap / Solaris
+
+Trying to mount 'KF4005.img' at '/mnt/img/'
 Mount point exists
 Mounting...
 Using loop device '/dev/loop4'
 Image mounted successfully
-Analysing directory '/mnt/imgbin'
-Analysing directory '/mnt/imgsbin'
+Analysing directory '/mnt/img/bin'
+Analysing directory '/mnt/img/sbin'
 Unmounting image
 kieran@ubuntu-d01:~/share/assignment$ head filedata.txt 
--rwxr-xr-x 1 root root 249464 "2017-06-16 00:06:21" "/mnt/img/bin/btrfs-calc-size"
-lrwxrwxrwx 1 root root 5 "2017-06-16 00:06:18" "/mnt/img/bin/btrfsck" -> "btrfs"
--rwxr-xr-x 1 root root 278376 "2017-06-16 00:06:20" "/mnt/img/bin/btrfs-convert"
--rwxr-xr-x 1 root root 249464 "2017-06-16 00:06:20" "/mnt/img/bin/btrfs-debug-tree"
--rwxr-xr-x 1 root root 245368 "2017-06-16 00:06:21" "/mnt/img/bin/btrfs-find-root"
--rwxr-xr-x 1 root root 270136 "2017-06-16 00:06:20" "/mnt/img/bin/btrfs-image"
--rwxr-xr-x 1 root root 249464 "2017-06-16 00:06:21" "/mnt/img/bin/btrfs-map-logical"
--rwxr-xr-x 1 root root 245368 "2017-06-16 00:06:21" "/mnt/img/bin/btrfs-select-super"
--rwxr-xr-x 1 root root 253816 "2017-06-16 00:06:20" "/mnt/img/bin/btrfs-show-super"
--rwxr-xr-x 1 root root 249464 "2017-06-16 00:06:21" "/mnt/img/bin/btrfstune"
+-rwxr-xr-x 1 root root 249464 "2017-06-16 00:06:21" "/mnt/img//bin/btrfs-calc-size"
+lrwxrwxrwx 1 root root 5 "2017-06-16 00:06:18" "/mnt/img//bin/btrfsck" -> "btrfs"
+-rwxr-xr-x 1 root root 278376 "2017-06-16 00:06:20" "/mnt/img//bin/btrfs-convert"
+-rwxr-xr-x 1 root root 249464 "2017-06-16 00:06:20" "/mnt/img//bin/btrfs-debug-tree"
+-rwxr-xr-x 1 root root 245368 "2017-06-16 00:06:21" "/mnt/img//bin/btrfs-find-root"
+-rwxr-xr-x 1 root root 270136 "2017-06-16 00:06:20" "/mnt/img//bin/btrfs-image"
+-rwxr-xr-x 1 root root 249464 "2017-06-16 00:06:21" "/mnt/img//bin/btrfs-map-logical"
+-rwxr-xr-x 1 root root 245368 "2017-06-16 00:06:21" "/mnt/img//bin/btrfs-select-super"
+-rwxr-xr-x 1 root root 253816 "2017-06-16 00:06:20" "/mnt/img//bin/btrfs-show-super"
+-rwxr-xr-x 1 root root 249464 "2017-06-16 00:06:21" "/mnt/img//bin/btrfstune"
 kieran@ubuntu-d01:~/share/assignment$ ./db_import.sh -d test -u kieran
 Enter password for kieran
 Enter password: 
 kieran@ubuntu-d01:~/share/assignment$ head sqlout.txt 
 filePath	perms	userID	groupID	modified
-/mnt/img/bin/bzcmp	lrwxrwxrwx	root	root	2018-03-08 13:03:24
-/mnt/img/bin/bzegrep	lrwxrwxrwx	root	root	2018-03-08 13:03:24
-/mnt/img/bin/bzfgrep	lrwxrwxrwx	root	root	2018-03-08 13:03:24
-/mnt/img/bin/bzless	lrwxrwxrwx	root	root	2018-03-08 13:03:24
-/mnt/img/bin/dnsdomainname	lrwxrwxrwx	root	root	2018-03-08 13:03:24
-/mnt/img/bin/domainname	lrwxrwxrwx	root	root	2018-03-08 13:03:24
-/mnt/img/bin/lessfile	lrwxrwxrwx	root	root	2018-03-08 13:03:24
-/mnt/img/bin/lsmod	lrwxrwxrwx	root	root	2018-03-08 13:03:24
-/mnt/img/bin/mt	lrwxrwxrwx	root	root	2018-03-08 13:03:24
-kieran@ubuntu-d01:~/share/assignment$ ./cleanup.sh -d test -u kieran
-Removing created files
-Enter password for kieran
-Enter password: 
+/mnt/img//bin/bzcmp	lrwxrwxrwx	root	root	2018-03-08 13:03:24
+/mnt/img//bin/bzegrep	lrwxrwxrwx	root	root	2018-03-08 13:03:24
+/mnt/img//bin/bzfgrep	lrwxrwxrwx	root	root	2018-03-08 13:03:24
+/mnt/img//bin/bzless	lrwxrwxrwx	root	root	2018-03-08 13:03:24
+/mnt/img//bin/dnsdomainname	lrwxrwxrwx	root	root	2018-03-08 13:03:24
+/mnt/img//bin/domainname	lrwxrwxrwx	root	root	2018-03-08 13:03:24
+/mnt/img//bin/lessfile	lrwxrwxrwx	root	root	2018-03-08 13:03:24
+/mnt/img//bin/lsmod	lrwxrwxrwx	root	root	2018-03-08 13:03:24
+/mnt/img//bin/mt	lrwxrwxrwx	root	root	2018-03-08 13:03:24
 kieran@ubuntu-d01:~/share/assignment$ 
