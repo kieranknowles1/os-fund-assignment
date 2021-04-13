@@ -17,4 +17,6 @@ LOAD DATA LOCAL INFILE 'filedata.txt' INTO TABLE KF4005A
 FIELDS TERMINATED BY ' '
 OPTIONALLY ENCLOSED BY '"';
 
-SELECT filePath, perms, userID, groupID, modified FROM KF4005A
+SELECT filePath, perms, userID, groupID, modified
+    FROM KF4005A
+    ORDER BY modified DESC
