@@ -1,5 +1,4 @@
 kieran@ubuntu-d01:~/share/assignment$ sudo ./disk_analysis.sh -i KF4005.img -m /mnt/img
-[sudo] password for kieran: 
 Trying to mount 'KF4005.img' at '/mnt/img'
 Mount point exists
 Mounting...
@@ -8,7 +7,33 @@ Image mounted successfully
 Analysing directory '/mnt/imgbin'
 Analysing directory '/mnt/imgsbin'
 Unmounting image
+kieran@ubuntu-d01:~/share/assignment$ head filedata.txt 
+-rwxr-xr-x 1 root root 249464 "2017-06-16 00:06:21" "/mnt/img/bin/btrfs-calc-size"
+lrwxrwxrwx 1 root root 5 "2017-06-16 00:06:18" "/mnt/img/bin/btrfsck" -> "btrfs"
+-rwxr-xr-x 1 root root 278376 "2017-06-16 00:06:20" "/mnt/img/bin/btrfs-convert"
+-rwxr-xr-x 1 root root 249464 "2017-06-16 00:06:20" "/mnt/img/bin/btrfs-debug-tree"
+-rwxr-xr-x 1 root root 245368 "2017-06-16 00:06:21" "/mnt/img/bin/btrfs-find-root"
+-rwxr-xr-x 1 root root 270136 "2017-06-16 00:06:20" "/mnt/img/bin/btrfs-image"
+-rwxr-xr-x 1 root root 249464 "2017-06-16 00:06:21" "/mnt/img/bin/btrfs-map-logical"
+-rwxr-xr-x 1 root root 245368 "2017-06-16 00:06:21" "/mnt/img/bin/btrfs-select-super"
+-rwxr-xr-x 1 root root 253816 "2017-06-16 00:06:20" "/mnt/img/bin/btrfs-show-super"
+-rwxr-xr-x 1 root root 249464 "2017-06-16 00:06:21" "/mnt/img/bin/btrfstune"
 kieran@ubuntu-d01:~/share/assignment$ ./db_import.sh -d test -u kieran
+Enter password for kieran
+Enter password: 
+kieran@ubuntu-d01:~/share/assignment$ head sqlout.txt 
+filePath	perms	userID	groupID	modified
+/mnt/img/bin/bzcmp	lrwxrwxrwx	root	root	2018-03-08 13:03:24
+/mnt/img/bin/bzegrep	lrwxrwxrwx	root	root	2018-03-08 13:03:24
+/mnt/img/bin/bzfgrep	lrwxrwxrwx	root	root	2018-03-08 13:03:24
+/mnt/img/bin/bzless	lrwxrwxrwx	root	root	2018-03-08 13:03:24
+/mnt/img/bin/dnsdomainname	lrwxrwxrwx	root	root	2018-03-08 13:03:24
+/mnt/img/bin/domainname	lrwxrwxrwx	root	root	2018-03-08 13:03:24
+/mnt/img/bin/lessfile	lrwxrwxrwx	root	root	2018-03-08 13:03:24
+/mnt/img/bin/lsmod	lrwxrwxrwx	root	root	2018-03-08 13:03:24
+/mnt/img/bin/mt	lrwxrwxrwx	root	root	2018-03-08 13:03:24
+kieran@ubuntu-d01:~/share/assignment$ ./cleanup.sh -d test -u kieran
+Removing created files
 Enter password for kieran
 Enter password: 
 kieran@ubuntu-d01:~/share/assignment$ 
