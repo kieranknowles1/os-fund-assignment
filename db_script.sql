@@ -1,4 +1,4 @@
---https://www.w3schools.com/sql/sql_create_table.asp
+/* https://www.w3schools.com/sql/sql_create_table.asp */
 CREATE TABLE IF NOT EXISTS KF4005A (
     perms CHAR(10),
     links INT(6),
@@ -9,8 +9,10 @@ CREATE TABLE IF NOT EXISTS KF4005A (
     filePath VARCHAR(200) PRIMARY KEY
 );
 
---https://dev.mysql.com/doc/refman/8.0/en/load-data.html
---https://stackoverflow.com/questions/18838000/mysql-csv-import-datetime-value
+/*
+https://dev.mysql.com/doc/refman/8.0/en/load-data.html
+https://stackoverflow.com/questions/18838000/mysql-csv-import-datetime-value
+*/
 LOAD DATA LOCAL INFILE 'filedata.txt' INTO TABLE KF4005A
 FIELDS TERMINATED BY ' '
 OPTIONALLY ENCLOSED BY '"';
