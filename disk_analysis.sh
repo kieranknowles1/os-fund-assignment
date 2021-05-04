@@ -131,7 +131,7 @@ analyse_dir() {
 	# https://stackoverflow.com/questions/156532/how-do-i-import-a-whitespace-delimited-text-file-into-mysql
 	# Format for database import
 
-	echo "Analysing directory '$mount_point$1'"
+	echo "Analysing directory '$mount_point/$1'"
 	ls 	--almost-all \
 		--quote-name \
 		--time-style='+"%Y-%m-%d %H:%m:%S"' \
@@ -176,9 +176,10 @@ while getopts ":i:m:a:d" arg; do
 	esac
 done
 
-if [[ -z "$image" ]] || [[ -z "$mount_point" ]]; then
+if [[ -z "$mount_point" ]]; then
 	echo "Missing a required parameter">&2
-	echo -e "\t[REQUIRED] -i <img> Image">&2
+	echo -e "\t[OPTIONAL] -i <img> Image">&2
+	echo -e "\t              If no image is specified, script will asssume it is already mounted"
 	echo -e "\t[REQUIRED] -m <dir> Mount point">&2
 	echo -e "\t[OPTIONAL] -a <dirs>='bin sbin' analysis directories (space delimited)">&2
 	echo -e "\t[OPTIONAL] -d Debug mode">&2
@@ -186,20 +187,24 @@ if [[ -z "$image" ]] || [[ -z "$mount_point" ]]; then
 	exit 1
 fi
 
-# Analyse partition table
-echo "Partition table:"
-fdisk -l $image
-echo ""
+if [[ ! -z "$image" ]]; then
+	# Analyse partition table
+	echo "Partition table:"
+	fdisk -l $image
+	echo ""
 
-try_mount $image $mount_point
+	try_mount $image $mount_point
 
-# Check that mount was successful
-if [[ "$?" -ne 0 ]]; then
-	echo "Could not mount image">&2
-	exit 1
+	# Check that mount was successful
+	if [[ "$?" -ne 0 ]]; then
+		echo "Could not mount image">&2
+		exit 1
+	fi
+
+	echo "Image mounted successfully"
+else
+	echo "Assuming image is already mounted"
 fi
-
-echo "Image mounted successfully"
 
 # Extract metadata
 
@@ -210,7 +215,9 @@ done
 
 # Cleanup
 if [[ $debug != true ]]; then
-	cleanup $mount_point
+	if [[ ! -z "$image" ]]; then
+		cleanup $mount_point
+	fi
 else
 	echo "[DEBUG] Keeping image mounted"
 fi
